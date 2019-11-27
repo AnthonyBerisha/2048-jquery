@@ -1,0 +1,145 @@
+.game-title { 
+	/* font-family: ; */
+	margin-left: auto;
+	
+}
+
+body {
+	background: #faf8ef;
+
+}
+
+.game-container {
+	position: relative;
+	padding: 15px;
+	border-radius: 6px;
+	background: #bbada0;
+	margin-top: 50px;
+	margin-left: auto;
+	height: 500px;
+	width: 500px;
+	/* -webkit-box-sizing: border-box; */
+	/* -moz-box-sizing: border-box; */
+	box-sizing: border-box;
+	
+}
+
+.grid-container {
+	position: absolute;
+	z-index: 1;
+}
+
+/*	Grid rows
+ *	The last grid-row doesn't have a bottom margin
+ */
+ .grid-row {margin-bottom: 15px;}
+ .grid-row:last-child {margin-bottom: 0;}
+ .grid-row:after {
+	content: "";
+	display: block;
+	clear: both;
+}
+ 
+ 
+ /*	Grid rows
+  *	The last grid-row doesn't have a bottom margin
+  */
+.grid-cell {
+	width: 106.25px;
+	height: 106.25px;
+	margin-right: 15px;
+	float: left;
+	border-radius: 3px;
+	background: LightGray;
+}
+.grid-cell:last-child {margin-right: 0px;}
+
+
+/* Tiles */
+
+.tile-container {
+	position: relative;
+	z-index: 2;
+}
+
+.tile, .tile .tile-inner {
+	width: 106.25px;
+	height: 106.25px;
+	line-height: 106.25px;
+}
+
+.tile {
+	text-align: center;
+	position: absolute;
+	font-weight: bold;
+	border-radius: 3px;
+	background-color: red;
+	z-index: 10;
+}
+
+.tile-2 {}
+.tile-8 {}
+.tile-16 {}
+.tile-32 {}
+.tile-64 {}
+.tile-128 {}
+.tile-256 {}
+.tile-512 {}
+.tile-1024 {}
+.tile-2048 {}
+
+/* First row positions */
+.tile.tile-position-1-1 {
+	transform: translate(0px, 0px);
+}
+.tile.tile-position-2-1 {
+	transform: translate(121.25px, 0px);
+}
+.tile.tile-position-3-1 {
+	transform: translate(242.50px, 0px);
+}
+.tile.tile-position-4-1 {
+	transform: translate(363.75px, 0px);
+}
+
+/* Second row positions */
+.tile.tile-position-1-2 {
+	transform: translate(0px, 121.25px);
+}
+.tile.tile-position-2-2 {
+	transform: translate(121.25px, 121.25px);
+}
+.tile.tile-position-3-2 {
+	transform: translate(242.50px, 121.25px);
+}
+.tile.tile-position-4-2 {
+	transform: translate(363.75px, 121.25px);
+}
+
+/* Third row positions */
+.tile.tile-position-1-3 {
+	transform: translate(0px, 242.50px);
+}
+.tile.tile-position-2-3 {
+	transform: translate(121.25px, 242.50px);
+}
+.tile.tile-position-3-3 {
+	transform: translate(242.50px, 242.50px);
+}
+.tile.tile-position-4-3 {
+	transform: translate(363.75px, 242.50px);
+}
+
+/* First row positions */
+.tile.tile-position-1-4 {
+	transform: translate(0px, 363.75px);
+}
+.tile.tile-position-2-4 {
+	transform: translate(121.25px, 363.75px);
+}
+.tile.tile-position-3-4 {
+	transform: translate(242.50px, 363.75px);
+}
+.tile.tile-position-4-4 {
+	transform: translate(363.75px, 363.75px);
+}
