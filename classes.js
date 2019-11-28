@@ -50,17 +50,36 @@ class Grid {
     }
 
     newPosition(vector, tile) {
-
+        
         // return _newPosition;
     }
 
-    moveTiles(vector, newPos) {
+    checkFreeCell(vector, tile) {
+        if (vector === 'ArrowLeft') {
+            for (let cell = 0; cell <= tile.x; cell++) {
+                if (this.grid[tile.y][cell] == 0) {
+                    console.log(tile);
+                    let freeCell = {x: cell, y: tile.y};
+                    return freeCell;
+                }
+            }
+        }
 
+    }
+
+    moveTiles(vector) {
         for (let y = 0; y < 4; y++) {
             for (let x = 0; x < 4; x++) {
                 if (this.grid[y][x] !== 0) {
-                    this.grid[y][x].moveTo({x: 2, y: 4});
-                    this.grid[newPos.x][newPos.y] = this.grid[y][x];
+                    let freeCell = this.checkFreeCell(vector, this.grid[y][x]);
+                    console.log(freeCell);
+                    // Call the moving object's moveTo method and send it the new position
+                    this.grid[y][x].moveTo(freeCell);
+
+                    // Update the object's position in the grid
+                    this.grid[freeCell.y][freeCell.x] = this.grid[y][x];
+
+                    // Erase it former position
                     this.grid[y][x] = 0;
                 }
             }
@@ -99,7 +118,7 @@ class Tile {
     }
 
     getPosition() {
-        return this.pos;
+        return array[x => this.x, y => this.y];
     }
 
     getValue() {
