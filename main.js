@@ -4,7 +4,7 @@
 	$.fn.startGame = function() {
 		// Generate grid with 2 randomly positioned tiles
 		var randomTile = new Tile({x: 3, y: 3}, grid);
-		var randomTile = new Tile({x: 0, y: 3}, grid);
+		var randomTile = new Tile({x: 3, y: 2}, grid);
 		// var randomTile = new Tile({x: 4, y: 2}, grid);
 	};
 
