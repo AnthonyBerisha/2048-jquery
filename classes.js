@@ -29,24 +29,14 @@ class Grid {
     }
 
     randomFreeCell() {
-
-    }
-
-    keyToVector(key) {
-        switch (key) {
-            case "ArrowLeft" :
-                return 'left';
-                break;
-            case "ArrowRight" :
-                return 'right';
-                break;
-            case "ArrowUp" :
-                return 'up';
-                break;
-            case "ArrowDown" :
-                return 'down';
-                break;
+        let availableCells;
+        for (y = 0; y < 4; y++) {
+            for (x = 0; x < 4; x++) {
+                if (this.grid[y][x] === 0)
+                    availableCells.push([y => y, x => x]);
+            }
         }
+        return availableCells;
     }
 
     newPosition(vector, tile) {
@@ -54,66 +44,75 @@ class Grid {
         // return _newPosition;
     }
 
-    checkFreeCell(vector, tile) {
+    moveTile(vector, tile) {
         // console.trace(tile);
         if (vector === 'ArrowLeft') {
             for (let cell = tile.x; cell >= 0; cell--) {
                 if (this.grid[tile.y][cell] === 0) {
-                    // console.log(cell);
-                    // console.log(tile);
-                    let freeCell = {x: cell, y: tile.y};
-                    console.log(tile.divSelector);
-                    return freeCell;
+                    let oldPosition = 'tile-position-'+tile.x+'-'+tile.y; 
+                    let newPosition = "tile-position-"+cell+"-"+tile.y;
+                    $('.'+oldPosition).addClass(newPosition);
+                    $('.'+newPosition).removeClass(oldPosition);
+                    this.grid[tile.y][cell] = tile;
+                    this.grid[tile.y][cell + 1] = 0;
+                    tile.x = cell;
+                    tile.classPosition = newPosition;
                 }
             }
         }
         if (vector === 'ArrowRight') {
-            for (let cell = 3; cell > tile.x; cell--) {
+            for (let cell = tile.x; cell < 4; cell++) {
                 if (this.grid[tile.y][cell] === 0) {
-                    let freeCell = {x: cell, y: tile.y};
-                    // tile.$(divSelector).
-                    return freeCell;
+                    let oldPosition = 'tile-position-'+tile.x+'-'+tile.y; 
+                    let newPosition = "tile-position-"+cell+"-"+tile.y;
+                    $('.'+oldPosition).addClass(newPosition);
+                    $('.'+newPosition).removeClass(oldPosition);
+                    this.grid[tile.y][cell] = tile;
+                    this.grid[tile.y][tile.x] = 0;
+                    tile.x = cell;
+                    tile.classPosition = newPosition;
                 }
             }
         }
         if (vector === 'ArrowUp') {
-            for (let cell = 0; cell < tile.y; cell++) {
+            for (let cell = tile.y; cell >= 0; cell--) {
                 if (this.grid[cell][tile.x] === 0) {
-                    let freeCell = {x: tile.x, y: cell};
-                    return freeCell;
+                    let oldPosition = 'tile-position-'+tile.x+'-'+tile.y; 
+                    let newPosition = "tile-position-"+tile.x+"-"+cell;
+                    $('.'+oldPosition).addClass(newPosition);
+                    $('.'+newPosition).removeClass(oldPosition);
+                    this.grid[cell][tile.x] = tile;
+                    this.grid[tile.y][tile.x] = 0;
+                    tile.y = cell;
+                    tile.classPosition = newPosition;
                 }
             }
         }
         if (vector === 'ArrowDown') {
-            for (let cell = 3; cell > tile.y; cell--) {
+            for (let cell = tile.y; cell < 4; cell++) {
                 if (this.grid[cell][tile.x] === 0) {
-                    let freeCell = {x: tile.x, y: cell};
-                    return freeCell;
+                    let oldPosition = 'tile-position-'+tile.x+'-'+tile.y; 
+                    let newPosition = "tile-position-"+tile.x+"-"+cell;
+                    $('.'+oldPosition).addClass(newPosition);
+                    $('.'+newPosition).removeClass(oldPosition);
+                    this.grid[cell][tile.x] = tile;
+                    this.grid[tile.y][tile.x] = 0;
+                    tile.y = cell;
+                    tile.classPosition = newPosition;
                 }
             }
         }
-
+        
+        
     }
 
     moveTiles(vector) {
         for (let y = 0; y < 4; y++) {
             for (let x = 0; x < 4; x++) {
                 if (this.grid[y][x] !== 0) {
-                    // console.log("object to move = ", this.grid[y][x])
-                    let freeCell = this.checkFreeCell(vector, this.grid[y][x]);
-                    // console.log("freecell function = ", this.checkFreeCell(vector, this.grid[y][x]));
-                    // console.log("freecell = ", freeCell);
-
-                    // Call the moving object's moveTo method and send it the new position
-                    this.grid[y][x].moveTo(freeCell);
-                    // Update the object's position in the grid
-                    this.grid[freeCell.y][freeCell.x] = this.grid[y][x];
-
-                    // Erase it former position
-                    this.grid[y][x] = 0;
+                    this.moveTile(vector, this.grid[y][x]);
                 }
             }
-
         }
     }
 
@@ -136,9 +135,8 @@ class Tile {
         this.x = position.x;
         this.y = position.y;
         this.value = this.initValue();
-        this.divSelector = "<div class='tile new-tile tile-position-"+this.x+"-"+this.y+"'>" 
-        + this.value + "</div>"; 
-        $("<div class='tile new-tile tile-position-"+this.x+"-"+this.y+"'>" 
+        this.classPosition = "tile-position-"+this.x+"-"+this.y; 
+        $("<div class='tile new-tile " + this.classPosition +"'>" 
           + this.value + "</div>").appendTo(".tile-container");
         grid.addTile(this);
     }
