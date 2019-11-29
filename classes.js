@@ -28,12 +28,12 @@ class Grid {
                       [0,0,0,0]]
     }
 
-    randomFreeCell() {
-        let availableCells;
-        for (y = 0; y < 4; y++) {
-            for (x = 0; x < 4; x++) {
+    randomFreeCells() {
+        let availableCells = [];
+        for (let y = 0; y < 4; y++) {
+            for (let x = 0; x < 4; x++) {
                 if (this.grid[y][x] === 0)
-                    availableCells.push([y => y, x => x]);
+                    availableCells.push([x, y]);
             }
         }
         return availableCells;

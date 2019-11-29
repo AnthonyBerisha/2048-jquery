@@ -8,12 +8,22 @@
 		// var randomTile = new Tile({x: 4, y: 2}, grid);
 	};
 
-	// $.fn.createTile(grid) {
+	$.fn.createRandomTile = function(grid) {
+		// Get all the available cells in the grid
+		let availableCells = grid.randomFreeCells();
+		console.log(availableCells);
+		// Choose a random index in the free positions array
+		let randomIndex = Math.floor((Math.random() * availableCells.length) + 1);
+		console.log("Random number: ", randomIndex)
+		let randomPosition = {x: availableCells[randomIndex][0], y: availableCells[randomIndex][1]};
+		console.log("Random position: ", randomPosition);
+		var newTile = new Tile(randomPosition, grid)
 
-	// }
+	}
 
 	$.fn.moveTiles = function(vector) {
 		grid.moveTiles(vector);
+		jQuery().createRandomTile(grid);
 	};
 
 	$.fn.printGrid = function() {
