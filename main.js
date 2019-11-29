@@ -3,26 +3,25 @@
 	var grid = new Grid();	
 	$.fn.startGame = function() {
 		// Generate grid with 2 randomly positioned tiles
-		var randomTile = new Tile({x: 2, y: 2}, grid);
-		var randomTile = new Tile({x: 2, y: 3}, grid);
-		// var randomTile = new Tile({x: 4, y: 2}, grid);
+		jQuery().createRandomTile(grid);
+		jQuery().createRandomTile(grid);
+		$(".score").text("Score: "+gameManager.currentScore);
 	};
 
 	$.fn.createRandomTile = function(grid) {
 		// Get all the available cells in the grid
 		let availableCells = grid.randomFreeCells();
-		console.log(availableCells);
+		// console.log(availableCells);
 		// Choose a random index in the free positions array
-		let randomIndex = Math.floor((Math.random() * availableCells.length) + 1);
-		console.log("Random number: ", randomIndex)
+		let randomIndex = Math.floor((Math.random() * availableCells.length));
+		// console.log("Random number: ", randomIndex)
 		let randomPosition = {x: availableCells[randomIndex][0], y: availableCells[randomIndex][1]};
-		console.log("Random position: ", randomPosition);
+		// console.log("Random position: ", randomPosition);
 		var newTile = new Tile(randomPosition, grid)
-
 	}
 
 	$.fn.moveTiles = function(vector) {
-		grid.moveTiles(vector);
+		grid.moveTiles(vector, gameManager);
 		jQuery().createRandomTile(grid);
 	};
 
@@ -49,8 +48,11 @@ $(document).ready(function () {
 	$(document).keyup(function (key) { 
 		if (key.key === 'Control')
 			jQuery().printGrid();
-		else
+		else {
 			jQuery().moveTiles(key.key);
+			jQuery().printGrid();
+
+		}
 		// tile.moveTo({x: 1, y: 2});
 	});
 

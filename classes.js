@@ -11,6 +11,7 @@ class GameManager {
 
     setScore(newScore) {
         this.currentScore = newScore;
+        $(".score").text("Score: " +this.currentScore);
     }
 
     restartGame(){
@@ -39,22 +40,24 @@ class Grid {
         return availableCells;
     }
 
-    newPosition(vector, tile) {
-        
-        // return _newPosition;
-    }
-
-    moveTile(vector, tile) {
+    moveTile(vector, tile, GameManager) {
         // console.trace(tile);
         if (vector === 'ArrowLeft') {
             for (let cell = tile.x; cell >= 0; cell--) {
-                if (this.grid[tile.y][cell] === 0) {
+                if (this.grid[tile.y][cell].value === tile.value && 
+                    this.grid[tile.y][cell] !== tile){ // If the next cube has the same value
+
+                    this.grid[tile.y][cell].mergeWith(tile, GameManager);
+                    this.grid[tile.y][tile.x] = 0;
+                }
+                else if (this.grid[tile.y][cell] === 0) {
                     let oldPosition = 'tile-position-'+tile.x+'-'+tile.y; 
                     let newPosition = "tile-position-"+cell+"-"+tile.y;
                     $('.'+oldPosition).addClass(newPosition);
                     $('.'+newPosition).removeClass(oldPosition);
+                    $('.'+newPosition).removeClass("new-tile");
                     this.grid[tile.y][cell] = tile;
-                    this.grid[tile.y][cell + 1] = 0;
+                    this.grid[tile.y][tile.x] = 0;
                     tile.x = cell;
                     tile.classPosition = newPosition;
                 }
@@ -62,11 +65,18 @@ class Grid {
         }
         if (vector === 'ArrowRight') {
             for (let cell = tile.x; cell < 4; cell++) {
-                if (this.grid[tile.y][cell] === 0) {
+                if (this.grid[tile.y][cell].value === tile.value && 
+                    this.grid[tile.y][cell] !== tile){
+
+                    this.grid[tile.y][cell].mergeWith(tile, GameManager);
+                    this.grid[tile.y][tile.x] = 0;
+                }
+                else if (this.grid[tile.y][cell] === 0) {
                     let oldPosition = 'tile-position-'+tile.x+'-'+tile.y; 
                     let newPosition = "tile-position-"+cell+"-"+tile.y;
                     $('.'+oldPosition).addClass(newPosition);
                     $('.'+newPosition).removeClass(oldPosition);
+                    $('.'+newPosition).removeClass("new-tile");
                     this.grid[tile.y][cell] = tile;
                     this.grid[tile.y][tile.x] = 0;
                     tile.x = cell;
@@ -76,11 +86,18 @@ class Grid {
         }
         if (vector === 'ArrowUp') {
             for (let cell = tile.y; cell >= 0; cell--) {
-                if (this.grid[cell][tile.x] === 0) {
+                if (this.grid[cell][tile.x].value === tile.value && 
+                    this.grid[cell][tile.x] !== tile){ 
+
+                    this.grid[cell][tile.x].mergeWith(tile, GameManager);
+                    this.grid[tile.y][tile.x] = 0;
+                }
+                else if (this.grid[cell][tile.x] === 0) {
                     let oldPosition = 'tile-position-'+tile.x+'-'+tile.y; 
                     let newPosition = "tile-position-"+tile.x+"-"+cell;
                     $('.'+oldPosition).addClass(newPosition);
                     $('.'+newPosition).removeClass(oldPosition);
+                    $('.'+newPosition).removeClass("new-tile");
                     this.grid[cell][tile.x] = tile;
                     this.grid[tile.y][tile.x] = 0;
                     tile.y = cell;
@@ -90,11 +107,18 @@ class Grid {
         }
         if (vector === 'ArrowDown') {
             for (let cell = tile.y; cell < 4; cell++) {
-                if (this.grid[cell][tile.x] === 0) {
+                if (this.grid[cell][tile.x].value === tile.value && 
+                    this.grid[cell][tile.x] !== tile) {
+
+                    this.grid[cell][tile.x].mergeWith(tile, GameManager);
+                    this.grid[tile.y][tile.x] = 0;
+                }
+                else if (this.grid[cell][tile.x] === 0) {
                     let oldPosition = 'tile-position-'+tile.x+'-'+tile.y; 
                     let newPosition = "tile-position-"+tile.x+"-"+cell;
                     $('.'+oldPosition).addClass(newPosition);
                     $('.'+newPosition).removeClass(oldPosition);
+                    $('.'+newPosition).removeClass("new-tile");
                     this.grid[cell][tile.x] = tile;
                     this.grid[tile.y][tile.x] = 0;
                     tile.y = cell;
@@ -106,11 +130,11 @@ class Grid {
         
     }
 
-    moveTiles(vector) {
+    moveTiles(vector, GameManager) {
         for (let y = 0; y < 4; y++) {
             for (let x = 0; x < 4; x++) {
                 if (this.grid[y][x] !== 0) {
-                    this.moveTile(vector, this.grid[y][x]);
+                    this.moveTile(vector, this.grid[y][x], GameManager);
                 }
             }
         }
@@ -123,7 +147,17 @@ class Grid {
     }
     
     printGrid() {
-        console.log(this.grid);
+        let valArray =[ [0,0,0,0],
+                        [0,0,0,0],
+                        [0,0,0,0],
+                        [0,0,0,0]];
+        for (let y = 0; y < 4; y++) {
+            for (let x = 0; x < 4; x++) {
+                if (this.grid[y][x] !== 0)
+                    valArray[y][x] = this.grid[y][x].value; 
+            }
+        }
+        console.log(valArray);
     }
 
 
@@ -131,26 +165,38 @@ class Grid {
 
 class Tile {
     constructor(position, grid) {
-        // .id += 1;
+        this.id += 1;
         this.x = position.x;
         this.y = position.y;
         this.value = this.initValue();
         this.classPosition = "tile-position-"+this.x+"-"+this.y; 
-        $("<div class='tile new-tile " + this.classPosition +"'>" 
+        $("<div class='tile " + this.classPosition +" new-tile " + "tile-"+this.value+"'>" 
           + this.value + "</div>").appendTo(".tile-container");
         grid.addTile(this);
     }
 
     initValue() {
-        if ((Math.floor((Math.random() * 10) + 1) % 2) === 0)
-			    return 2;
-		    else
-			    return 4;
+        if ((Math.floor((Math.random() * 10) + 1) % 2) === 0) {
+            return 2;
+        }
+        else {
+            return 4;
+        }
     }
 
-    // mergeWith() {
+    mergeWith (tile, GameManager) {
+        console.log("Tile "+this.classPosition+ " merging with " + tile.classPosition);
+        this.value += tile.value;
+        $('.'+this.classPosition).addClass("tile-"+this.value);
+        $('.'+this.classPosition).removeClass("tile-"+(this.value / 2));
+        $('.'+this.classPosition).text(this.value);
+        $('.'+tile.classPosition).remove();
+        GameManager.setScore(GameManager.getScore() + this.value);
+        console.log(GameManager.currentScore);
+    }
 
-    // }
+    updateClass() {
+    }
 
     getPosition() {
         return array[x => this.x, y => this.y];
@@ -159,21 +205,5 @@ class Tile {
     getValue() {
         return this.value;
     }
-
-    moveTo(position) {
-        // Add new position class
-        $(".tile-position-" + this.x + "-" + this.y).addClass("tile-position-" + position.x + "-" + position.y);
-        
-        // then remove the old one
-        $(".tile-position-" + position.x + "-" + position.y)
-        .removeClass("tile-position-" + this.x + "-" + this.y);
-        // Remove .new-tile class
-        $(".tile-position-" + position.x + "-" + position.y)
-        .removeClass("new-tile");
-        this.x = position.x;
-        this.y = position.y;
-    }
-
-
 
 }
