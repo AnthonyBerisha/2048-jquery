@@ -31,7 +31,8 @@
 	}
 
 	$.fn.moveTiles = function(vector) {
-		grid.moveTiles(vector, gameManager);
+		let gr = grid.moveTiles(vector, gameManager);
+		console.log(gr);
 		jQuery().createRandomTile(grid);
 	};
 

@@ -140,43 +140,68 @@ class Grid {
         $('.'+tile.classPosition).removeClass("tile-merged");
     }
 
+    compareGrids(oldGrid, newGrid) {
+        if (!oldGrid || !newGrid) return false;
+        if (oldGrid.length != newGrid.length) return false;
+        for (let y = 0; y < 4; y++) {
+            for (let x = 0; x < 4; x++) {
+                if (oldGrid[y][x] != newGrid[y][x])
+                    return false;
+            }
+        }
+        return true;
+    }
+
     moveTiles(vector, GameManager) {
-        if (vector === 'ArrowLeft') {
-            for (let y = 0; y < 4; y++) {
-                for (let x = 0; x < 4; x++) {
-                    if (this.grid[y][x] !== 0) {
-                        this.moveTile(vector, this.grid[y][x], GameManager);
-                    }
+        let currentGrid = this.grid;
+        
+        for (let y = 0; y < 4; y++) {
+            for (let x = 0; x < 4; x++) {
+                if (this.grid[y][x] !== 0) {
+                    this.moveTile(vector, this.grid[y][x], GameManager);
                 }
             }
         }
-        if (vector === 'ArrowRight') {
-            for (let y = 0; y < 4; y++) {
-                for (let x = 3; x >= 0; x--) {
-                    if (this.grid[y][x] !== 0) {
-                        this.moveTile(vector, this.grid[y][x], GameManager);
-                    }
-                }
-            }
-        }
-        if (vector === 'ArrowUp') {
-            for (let y = 0; y < 4; y++) {
-                for (let x = 0; x < 4; x++) {
-                    if (this.grid[y][x] !== 0) {
-                        this.moveTile(vector, this.grid[y][x], GameManager);
-                    }
-                }
-            }
-        }
-        if (vector === 'ArrowDown') {
-            for (let y = 3; y >= 0; y--) {
-                for (let x = 0; x < 4; x++) {
-                    if (this.grid[y][x] !== 0) {
-                        this.moveTile(vector, this.grid[y][x], GameManager);
-                    }
-                }
-            }
-        }
+        // console.trace(this.grid);
+        let ret = this.compareGrids(currentGrid, this.grid);
+        // console.log(ret);
+        return currentGrid;
+        // if (vector === 'ArrowLeft') {
+        //     for (let y = 0; y < 4; y++) {
+        //         for (let x = 0; x < 4; x++) {
+        //             if (this.grid[y][x] !== 0) {
+        //                 this.moveTile(vector, this.grid[y][x], GameManager);
+        //             }
+        //         }
+        //     }
+        // }
+        // if (vector === 'ArrowRight') {
+        //     for (let y = 0; y < 4; y++) {
+        //         for (let x = 3; x >= 0; x--) {
+        //             if (this.grid[y][x] !== 0) {
+        //                 this.moveTile(vector, this.grid[y][x], GameManager);
+        //             }
+        //         }
+        //     }
+        // }
+        // if (vector === 'ArrowUp') {
+        //     for (let y = 0; y < 4; y++) {
+        //         for (let x = 0; x < 4; x++) {
+        //             if (this.grid[y][x] !== 0) {
+        //                 this.moveTile(vector, this.grid[y][x], GameManager);
+        //             }
+        //         }
+        //     }
+        // }
+        // if (vector === 'ArrowDown') {
+        //     for (let y = 3; y >= 0; y--) {
+        //         for (let x = 0; x < 4; x++) {
+        //             if (this.grid[y][x] !== 0) {
+        //                 this.moveTile(vector, this.grid[y][x], GameManager);
+        //             }
+        //         }
+        //     }
+        // }
     }
 
     addTile(tileObject){
