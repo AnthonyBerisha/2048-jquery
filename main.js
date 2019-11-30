@@ -5,6 +5,16 @@
 		// Generate grid with 2 randomly positioned tiles
 		jQuery().createRandomTile(grid);
 		jQuery().createRandomTile(grid);
+
+		////////////////////////TEST HERE
+		// var newTile = new Tile ({x: 0, y: 1}, grid);
+		// var newTile2 = new Tile ({x: 1, y: 1}, grid);
+		// var newTile3 = new Tile ({x: 2, y: 1}, grid);
+		// var newTile4 = new Tile ({x: 3, y: 1}, grid);
+		// newTile2;
+		// newTile3;
+		// newTile4;
+
 		$(".score").text("Score: "+gameManager.currentScore);
 	};
 
@@ -48,7 +58,10 @@ $(document).ready(function () {
 	$(document).keyup(function (key) { 
 		if (key.key === 'Control')
 			jQuery().printGrid();
-		else {
+		else if (key.key === 'ArrowRight' ||
+				 key.key === 'ArrowLeft' ||
+				 key.key === 'ArrowUp' ||
+				 key.key === 'ArrowDown'){
 			jQuery().moveTiles(key.key);
 			jQuery().printGrid();
 
