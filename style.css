@@ -141,6 +141,8 @@ body {
 	z-index: 10;
 }
 
+.tile-merged {}
+
 @-webkit-keyframes appear {
 	0% {
 	  opacity: 0;
