@@ -115,7 +115,9 @@ $.fn.canMergeWith = function(oldTile, newTile) {
     let oldTilePosition = 'tile-position-'+oldTile.x+'-'+oldTile.y;
     let newTilePosition = 'tile-position-'+newTile.x+'-'+newTile.y;
     // If they have a different tile-x class
-    if ($('.'+oldTilePosition).hasClass) 
+    if ($('.'+newTilePosition).hasClass('tile-merged')) 
+        return false;
+    if (oldTile.value !== newTile.value)
         return false;
     if (typeof newTile !== 'object' || typeof oldTile !== 'object')
         return false;
@@ -128,82 +130,107 @@ $.fn.canMergeWith = function(oldTile, newTile) {
 
 $.fn.mergeWith = function(tileMerging, newTile) {
     let tilePosition = 'tile-position-';
-    console.log(newTile);
     let newValue = newTile.value + tileMerging.value;
+    newTile.value = newValue;
+    console.trace(newTile);
     $('.'+tilePosition+newTile.x+'-'+newTile.y).addClass("tile-"+ newValue);
     $('.'+tilePosition+newTile.x+'-'+newTile.y).addClass("tile-merged");
     $('.'+tilePosition+newTile.x+'-'+newTile.y).removeClass("tile-"+(newValue / 2));
     $('.'+tilePosition+newTile.x+'-'+newTile.y).text(newValue);
     $('.'+tilePosition+tileMerging.x+'-'+tileMerging.y).remove();
+    $().addTile(newTile);
+    $().removeTile(tileMerging);
+    // console.log(grid[newTile.y][newTile.x].value);
 }
 
+// LEFT
 $.fn.moveTileLeft = function(tile) {
     let tilePosition = 'tile-position-'+tile.x+'-'+tile.y;
     for (let targetCell = tile.x; targetCell >= 0; targetCell--) {
         if ($().canMergeWith(tile, grid[tile.y][targetCell])) {
             $().mergeWith(tile, grid[tile.y][targetCell]);
-            // grid[tile.y][newTile.x].value = newValue;
-            grid[tile.y][targetCell] = 0;
         }
-        if (grid[tile.y][targetCell] === 0) {
+        else if (grid[tile.y][targetCell] === 0) {
             let newPosition = 'tile-position-'+targetCell+'-'+tile.y;
             $('.'+tilePosition).addClass(newPosition);
             $('.'+newPosition).removeClass(tilePosition);
             $('.'+newPosition).removeClass('tile-new');
             grid[tile.y][targetCell] = tile;
-            grid[tile.y][tile.x] = 0;
+            $().removeTile(tile);
             tile.x = targetCell;
         }
         
         tilePosition = 'tile-position-'+targetCell+'-'+tile.y;
     }
 }
+
+// RIGHT
 $.fn.moveTileRight = function(tile) {
     let tilePosition = 'tile-position-'+tile.x+'-'+tile.y;
     for (let targetCell = tile.x; targetCell < 4; targetCell++) {
-        if (grid[tile.y][targetCell] === 0) {
+        if ($().canMergeWith(tile, grid[tile.y][targetCell])) {
+            $().mergeWith(tile, grid[tile.y][targetCell]);
+        }
+        else if (grid[tile.y][targetCell] === 0) {
             let newPosition = 'tile-position-'+targetCell+'-'+tile.y;
             $('.'+tilePosition).addClass(newPosition);
             $('.'+newPosition).removeClass(tilePosition);
             $('.'+newPosition).removeClass('tile-new');
             grid[tile.y][targetCell] = tile;
-            grid[tile.y][tile.x] = 0;
+            $().removeTile(tile);
             tile.x = targetCell;
         }
         tilePosition = 'tile-position-'+targetCell+'-'+tile.y;
     }
 }
+
+// UP
 $.fn.moveTileUp = function(tile) {
     let tilePosition = 'tile-position-'+tile.x+'-'+tile.y;
     for (let targetCell = tile.y; targetCell >= 0; targetCell--) {
-        if (grid[targetCell][tile.x] === 0) {
-            let newPosition = 'tile-position-'+tile.x+'-'+targetCell;
-            $('.'+tilePosition).addClass(newPosition);
-            $('.'+newPosition).removeClass(tilePosition);
-            $('.'+newPosition).removeClass('tile-new');
-            grid[targetCell][tile.x] = tile;
-            grid[tile.y][tile.x] = 0;
-            tile.y = targetCell;
+        if ($().canMergeWith(tile, grid[targetCell][tile.x])) {
+            $().mergeWith(tile, grid[targetCell][tile.x]);
         }
-        tilePosition = 'tile-position-'+tile.x+'-'+targetCell;
-    }
-}
-$.fn.moveTileDown = function(tile) {
-    let tilePosition = 'tile-position-'+tile.x+'-'+tile.y;
-    for (let targetCell = tile.y; targetCell < 4; targetCell++) {
-        if (grid[targetCell][tile.x] === 0) {
+        else if (grid[targetCell][tile.x] === 0) {
             let newPosition = 'tile-position-'+tile.x+'-'+targetCell;
             $('.'+tilePosition).addClass(newPosition);
             $('.'+newPosition).removeClass(tilePosition);
             $('.'+newPosition).removeClass('tile-new');
             grid[targetCell][tile.x] = tile;
-            grid[tile.y][tile.x] = 0;
+            $().removeTile(tile);
             tile.y = targetCell;
         }
         tilePosition = 'tile-position-'+tile.x+'-'+targetCell;
     }
 }
 
+// DOWN
+$.fn.moveTileDown = function(tile) {
+    let tilePosition = 'tile-position-'+tile.x+'-'+tile.y;
+    for (let targetCell = tile.y; targetCell < 4; targetCell++) {
+        if ($().canMergeWith(tile, grid[targetCell][tile.x])) {
+            $().mergeWith(tile, grid[targetCell][tile.x]);
+        }
+        if (grid[targetCell][tile.x] === 0) {
+            let newPosition = 'tile-position-'+tile.x+'-'+targetCell;
+            $('.'+tilePosition).addClass(newPosition);
+            $('.'+newPosition).removeClass(tilePosition);
+            $('.'+newPosition).removeClass('tile-new');
+            grid[targetCell][tile.x] = tile;
+            $().removeTile(tile);
+            tile.y = targetCell;
+        }
+        tilePosition = 'tile-position-'+tile.x+'-'+targetCell;
+    }
+}
+
+$.fn.addTile = function(tile) {
+    grid[tile.y][tile.x] = tile;
+}
+
+$.fn.removeTile = function(tile) {
+    grid[tile.y][tile.x] = 0;
+}
 
 
 $.fn.correctDirection = function(vector) {
@@ -220,18 +247,18 @@ $.fn.correctDirection = function(vector) {
 
 
 $.fn.printGrid = function() {
-    // let valArray =[ [0,0,0,0],
-    //                 [0,0,0,0],
-    //                 [0,0,0,0],
-    //                 [0,0,0,0]];
-    // for (let y = 0; y < 4; y++) {
-    //     for (let x = 0; x < 4; x++) {
-    //         if (grid[y][x] !== 0)
-    //             valArray[y][x] = grid[y][x].value; 
-    //     }
-    // }
-    // console.log(valArray);
-    console.log(grid);
+    let valArray =[ [0,0,0,0],
+                    [0,0,0,0],
+                    [0,0,0,0],
+                    [0,0,0,0]];
+    for (let y = 0; y < 4; y++) {
+        for (let x = 0; x < 4; x++) {
+            if (grid[y][x] !== 0)
+                valArray[y][x] = grid[y][x].value; 
+        }
+    }
+    console.log(valArray);
+    // console.log(grid);
 }
 })(jQuery);
 

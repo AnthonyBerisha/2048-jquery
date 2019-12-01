@@ -152,12 +152,15 @@ body {
 @keyframes spawn {
 	from {
 		transform: scale(0);
+		position: relative;
 		/* transform-origin: 0 0; */
 		-webkit-transform: scale(0);
 		/* -webkit-transform-origin: 0 0; */
 	}
 	to {
 		transform: scale(1);
+		position: relative;
+		
 		/* transform-origin: 0 0; */
 		-webkit-transform: scale(1);
 		/* -webkit-transform-origin: 0 0; */
