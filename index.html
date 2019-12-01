@@ -11,21 +11,31 @@
 		integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
 		crossorigin="anonymous">
 	</script>
-	<script src="classes.js"></script>
+	<script src="jquery.2048.js"></script>
 	<script src="main.js"></script>
 	<title>Anthony's 2048</title>
 </head>
 <body>
 	<h1 class="game-title">2048</h1>
 	<div class="game-header">
-		<button class="new-game">NEW GAME</button>
+		<button class="new-game">New game</button>
 		<div class="score-container">
 			<div class="score"> 
 				<!-- This will contain the current score -->
 			</div>
 		</div>
 	</div>
-
+	
+	<div class="game-over-screen">
+		<p class="game-over-message">Game Over</p>
+		<p class="game-over-score"></p>
+		<button class="new-game game-over-new-game">Try again</button>
+	</div>
+	<div class="victory-screen">
+		<p class="victory-message">Victory !</p>
+		<p class="victory-score"></p>
+		<button class="new-game victory-new-game">Try again</button>
+	</div>
 	<div class='game-container'>
 		<div class="grid-container">
 			<div class="grid-row">
