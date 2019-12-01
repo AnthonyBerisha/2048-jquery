@@ -3,14 +3,17 @@
 let grid = [ [0,0,0,0],
              [0,0,0,0],
              [0,0,0,0],
-             [0,0,0,0],];
+             [0,0,0,0]];
 
+let score = 0;
 
 $.fn.startGame = function() {
     // Generate the board and the two first tiles
     $().createRandomTile();
     $().createRandomTile();
     $().printGrid();
+    $('.score-container').text('Score: '+score);
+    // $('.score').text('0');
 }
 
 $.fn.createRandomTile = function() {
@@ -57,12 +60,14 @@ $.fn.freeCell = function(freeCellsPositions) {
 }
 
 $.fn.moveTiles = function(vector) {
+    let currentGrid = grid;
+    let canMove = false;
     switch (vector) {
         case 'ArrowLeft':
             for (let y = 0; y < 4; y++) {
                 for (let x = 0; x < 4; x++) {
                     if (grid[y][x] !== 0 && grid[y][x].value !== 0)
-                        $().moveTile(vector, grid[y][x]);
+                        canMove = $().moveTile(vector, grid[y][x]);
                 }
             }
         break;
@@ -70,7 +75,7 @@ $.fn.moveTiles = function(vector) {
             for (let y = 0; y < 4; y++) {
                 for (let x = 3; x >= 0; x--) {
                     if (grid[y][x] !== 0 && grid[y][x].value !== 0)
-                        $().moveTile(vector, grid[y][x]);
+                        canMove = $().moveTile(vector, grid[y][x]);
                 }
             }
         break;
@@ -78,7 +83,7 @@ $.fn.moveTiles = function(vector) {
             for (let y = 0; y < 4; y++) {
                 for (let x = 0; x < 4; x++) {
                     if (grid[y][x] !== 0 && grid[y][x].value !== 0)
-                        $().moveTile(vector, grid[y][x]);
+                        canMove = $().moveTile(vector, grid[y][x]);
                 }
             }
         break;
@@ -86,45 +91,44 @@ $.fn.moveTiles = function(vector) {
             for (let y = 3; y >= 0; y--) {
                 for (let x = 3; x >= 0; x--) {
                     if (grid[y][x] !== 0 && grid[y][x].value !== 0)
-                        $().moveTile(vector, grid[y][x]);
+                        canMove = $().moveTile(vector, grid[y][x]);
                 }
             }
         break;
     }
-    
+    if (canMove) {
+        $().createRandomTile();
+    }
 }
 
 $.fn.moveTile = function(vector, tile) {
     switch (vector) {
         case 'ArrowLeft':
-            $().moveTileLeft(tile);
+            return $().moveTileLeft(tile);
             break;
         case 'ArrowRight':
-            $().moveTileRight(tile);
+            return $().moveTileRight(tile);
             break;
         case 'ArrowUp':
-            $().moveTileUp(tile);
+            return $().moveTileUp(tile);
             break;
         case 'ArrowDown':
-            $().moveTileDown(tile);
+            return $().moveTileDown(tile);
             break;
     }
 }
 
 $.fn.canMergeWith = function(oldTile, newTile) {
-    let oldTilePosition = 'tile-position-'+oldTile.x+'-'+oldTile.y;
-    let newTilePosition = 'tile-position-'+newTile.x+'-'+newTile.y;
-    // If they have a different tile-x class
-    if ($('.'+newTilePosition).hasClass('tile-merged')) 
+    if (typeof newTile !== 'object' || typeof oldTile !== 'object')
+        return false;
+    if ($('.tile-position-'+newTile.x+'-'+newTile.y).hasClass('tile-merged')) 
         return false;
     if (oldTile.value !== newTile.value)
         return false;
-    if (typeof newTile !== 'object' || typeof oldTile !== 'object')
-        return false;
-    if (oldTile === newTile)
-        return false;
-    if ($('.'+newTile.tilePosition).hasClass('tile-merged'))
-        return false; 
+    // if (oldTile === newTile)
+    //     return false;
+    // if ($('.'+newTile.tilePosition).hasClass('tile-merged'))
+    //     return false; 
     return true;
 }
 
@@ -132,7 +136,7 @@ $.fn.mergeWith = function(tileMerging, newTile) {
     let tilePosition = 'tile-position-';
     let newValue = newTile.value + tileMerging.value;
     newTile.value = newValue;
-    console.trace(newTile);
+    $().updateScore(newValue);
     $('.'+tilePosition+newTile.x+'-'+newTile.y).addClass("tile-"+ newValue);
     $('.'+tilePosition+newTile.x+'-'+newTile.y).addClass("tile-merged");
     $('.'+tilePosition+newTile.x+'-'+newTile.y).removeClass("tile-"+(newValue / 2));
@@ -140,15 +144,18 @@ $.fn.mergeWith = function(tileMerging, newTile) {
     $('.'+tilePosition+tileMerging.x+'-'+tileMerging.y).remove();
     $().addTile(newTile);
     $().removeTile(tileMerging);
-    // console.log(grid[newTile.y][newTile.x].value);
 }
 
 // LEFT
 $.fn.moveTileLeft = function(tile) {
     let tilePosition = 'tile-position-'+tile.x+'-'+tile.y;
+    let moved = false;
+    
     for (let targetCell = tile.x; targetCell >= 0; targetCell--) {
-        if ($().canMergeWith(tile, grid[tile.y][targetCell])) {
-            $().mergeWith(tile, grid[tile.y][targetCell]);
+        if ($().canMergeWith(tile, grid[tile.y][tile.x - 1])) {
+            $().mergeWith(tile, grid[tile.y][tile.x - 1]);
+            moved = true;
+            return moved;
         }
         else if (grid[tile.y][targetCell] === 0) {
             let newPosition = 'tile-position-'+targetCell+'-'+tile.y;
@@ -158,18 +165,23 @@ $.fn.moveTileLeft = function(tile) {
             grid[tile.y][targetCell] = tile;
             $().removeTile(tile);
             tile.x = targetCell;
+            moved = true;
         }
         
         tilePosition = 'tile-position-'+targetCell+'-'+tile.y;
     }
+    return moved;
 }
 
 // RIGHT
 $.fn.moveTileRight = function(tile) {
     let tilePosition = 'tile-position-'+tile.x+'-'+tile.y;
+    let moved = false;
     for (let targetCell = tile.x; targetCell < 4; targetCell++) {
-        if ($().canMergeWith(tile, grid[tile.y][targetCell])) {
-            $().mergeWith(tile, grid[tile.y][targetCell]);
+        if ($().canMergeWith(tile, grid[tile.y][tile.x + 1])) {
+            $().mergeWith(tile, grid[tile.y][tile.x + 1]);
+            moved = true;
+            return moved;
         }
         else if (grid[tile.y][targetCell] === 0) {
             let newPosition = 'tile-position-'+targetCell+'-'+tile.y;
@@ -179,17 +191,22 @@ $.fn.moveTileRight = function(tile) {
             grid[tile.y][targetCell] = tile;
             $().removeTile(tile);
             tile.x = targetCell;
+            moved = true;
         }
         tilePosition = 'tile-position-'+targetCell+'-'+tile.y;
     }
+    return moved;
 }
 
 // UP
 $.fn.moveTileUp = function(tile) {
     let tilePosition = 'tile-position-'+tile.x+'-'+tile.y;
+    let moved = false;
     for (let targetCell = tile.y; targetCell >= 0; targetCell--) {
-        if ($().canMergeWith(tile, grid[targetCell][tile.x])) {
-            $().mergeWith(tile, grid[targetCell][tile.x]);
+        if (tile.y > 0 && $().canMergeWith(tile, grid[tile.y - 1][tile.x])) {
+            $().mergeWith(tile, grid[tile.y - 1][tile.x]);
+            moved = true;
+            return moved;
         }
         else if (grid[targetCell][tile.x] === 0) {
             let newPosition = 'tile-position-'+tile.x+'-'+targetCell;
@@ -199,17 +216,22 @@ $.fn.moveTileUp = function(tile) {
             grid[targetCell][tile.x] = tile;
             $().removeTile(tile);
             tile.y = targetCell;
+            moved = true;
         }
         tilePosition = 'tile-position-'+tile.x+'-'+targetCell;
     }
+    return moved;
 }
 
 // DOWN
 $.fn.moveTileDown = function(tile) {
     let tilePosition = 'tile-position-'+tile.x+'-'+tile.y;
+    let moved = false;
     for (let targetCell = tile.y; targetCell < 4; targetCell++) {
-        if ($().canMergeWith(tile, grid[targetCell][tile.x])) {
-            $().mergeWith(tile, grid[targetCell][tile.x]);
+        if (tile.y < 3 && $().canMergeWith(tile, grid[tile.y + 1][tile.x])) {
+            $().mergeWith(tile, grid[tile.y + 1][tile.x]);
+            moved = true;
+            return moved;
         }
         if (grid[targetCell][tile.x] === 0) {
             let newPosition = 'tile-position-'+tile.x+'-'+targetCell;
@@ -219,9 +241,11 @@ $.fn.moveTileDown = function(tile) {
             grid[targetCell][tile.x] = tile;
             $().removeTile(tile);
             tile.y = targetCell;
+            moved = true;
         }
         tilePosition = 'tile-position-'+tile.x+'-'+targetCell;
     }
+    return moved;
 }
 
 $.fn.addTile = function(tile) {
@@ -230,6 +254,12 @@ $.fn.addTile = function(tile) {
 
 $.fn.removeTile = function(tile) {
     grid[tile.y][tile.x] = 0;
+}
+
+$.fn.updateScore = function(newScore) {
+    score += newScore;
+    console.log(score);
+    $('.score-container').text('Score: '+score);
 }
 
 
@@ -266,17 +296,20 @@ $.fn.printGrid = function() {
 
 // MAIN LOOP HERE
 $(document).ready(function () {
+    var moving = false;
     $().startGame();
     $(document).keyup(function (event) { 
         if (event.key === 'Control')
             $().printGrid();
-        else if ($().correctDirection(event.key)) {
+        else if ($().correctDirection(event.key) && !moving) {
+            console.log(event.key);
+            moving = true;
             $('.tile').removeClass('tile-merged');
             $().moveTiles(event.key);
-            $().createRandomTile();
+            moving = false;
         }
     });
-
+    
 });
 
 
