@@ -42,7 +42,7 @@
 
     $.fn.victory = function() {
         isWin = true;
-        $('.victory-screen').toggle();
+        $('.victory-screen').show();
         $('.victory-screen .victory-score').text('Your score: '+score);
     }
 
@@ -54,7 +54,7 @@
 
     $.fn.gameOver = function() {
         isGameOver = true;
-        $('.game-over-screen').toggle();
+        $('.game-over-screen').show();
         $('.game-over-screen .game-over-score').text('Your score: '+score);
     }
 
@@ -67,7 +67,6 @@
         let availableMoves = 0;
         availableMoves += $().canMoveHorizontally();
         availableMoves += $().canMoveVertically();
-        console.log(availableMoves);
         return availableMoves > 0 ? true : false; 
     }
 
@@ -79,7 +78,6 @@
                     horizontalMoves++;
             }
         }
-        console.trace('hor: ', horizontalMoves);
         return horizontalMoves;
     }
     $.fn.canMoveVertically = function() {
@@ -90,12 +88,11 @@
                     verticalMoves++;
             }
         }
-        console.trace('ver: ', verticalMoves);
         return verticalMoves;
     }
     
     $.fn.controls = function(event) {
-        if (!isGameOver || !isWin) {
+        if (!isGameOver && !isWin) {
             if ($().correctDirection(event.key)) {
                 $('.tile').removeClass('tile-merged');
                 $().moveTiles(event.key);
@@ -104,8 +101,6 @@
                     tileMoved = false;
                 }
             }
-            $().checkGameOver();
-            $().check2048();
         }
     }
     
@@ -121,7 +116,7 @@
     }
     
     $.fn.randomInitValue = function() {
-        if ((Math.floor((Math.random() * 10) + 1) % 2) === 0)
+        if ((Math.floor((Math.random() * 10) + 1) % 2) < 8)
             return 2;
         else
             return 4;
