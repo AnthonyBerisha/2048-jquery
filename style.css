@@ -144,21 +144,23 @@ body {
 
 }
 
-.new-tile{
-	animation: spawn 200ms;
+.tile-new{
+	animation: spawn 300ms;
 	/* transform-origin: 0 0; */
-
+	
 }
 @keyframes spawn {
 	from {
 		transform: scale(0);
+		/* transform-origin: 0 0; */
 		-webkit-transform: scale(0);
-		/* -webkit-transform-origin: top left; */
+		/* -webkit-transform-origin: 0 0; */
 	}
 	to {
 		transform: scale(1);
+		/* transform-origin: 0 0; */
 		-webkit-transform: scale(1);
-		/* -webkit-transform-origin: top left; */
+		/* -webkit-transform-origin: 0 0; */
 	  }
   }
 
