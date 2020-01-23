@@ -218,14 +218,14 @@ animation: appear 200ms ease 100ms;
 -moz-animation-fill-mode: backwards;
 animation-fill-mode: backwards; }
 
-.tile-merged {
+/* .tile-merged {
 z-index: 20;
 -webkit-animation: pop 200ms ease 100ms;
 -moz-animation: pop 200ms ease 100ms;
 animation: pop 200ms ease 100ms;
 -webkit-animation-fill-mode: backwards;
 -moz-animation-fill-mode: backwards;
-animation-fill-mode: backwards; }
+animation-fill-mode: backwards; } */
 
 
 .tile-container {
